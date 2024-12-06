@@ -1,0 +1,8 @@
+body {
+    margin: 0;
+    user-select: none;
+    font-family: "Gabarito", sans-serif;
+    /* padding-top: var(--window-inset-top); */
+    /* padding-bottom: var(--window-inset-bottom); */
+    background-color: var(--background);
+  }
