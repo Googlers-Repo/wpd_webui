@@ -17,7 +17,7 @@ import { MMRLSwitch } from "./components/Switch";
 import { useNetworks } from "./hooks/useNetworks";
 import { configStoreFallback } from "./util/configStoreFallback";
 import { useLocalStorage } from "usehooks-ts";
-import { isNotMMRL } from "./util/isNotMMRL";
+import { isMMRL } from "./util/isMMRL";
 
 function App() {
   const networks = useNetworks(configStoreFallback);
@@ -55,7 +55,7 @@ function App() {
         }}
       />
       <Scaffold>
-        {isNotMMRL() ? (
+        {isMMRL() ? (
           <Alert
             sx={{
               marginTop: "8px",
@@ -112,6 +112,11 @@ function App() {
                       backgroundColor: "var(--surfaceContainerLowest)",
                       borderRadius: "20px",
                       color: "var(--onSurface)",
+                    }}
+                    onClick={()=> {
+                      if (!hidePasswords) {
+                        $mmrl_wpd.shareText(wifi.psk)
+                      }
                     }}
                   >
                     {wifi.psk
