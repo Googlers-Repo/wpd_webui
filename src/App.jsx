@@ -20,13 +20,6 @@ import { useLocalStorage } from "usehooks-ts";
 import { isMMRL } from "./util/isMMRL";
 
 function App() {
-  const networks = useNetworks(configStoreFallback);
-
-  const [hidePasswords, setHidePasswords] = useLocalStorage(
-    "hidePasswords",
-    true
-  );
-
   return (
     <Box sx={{ paddingBottom: "var(--window-inset-bottom)", flexGrow: 1 }}>
       <HideOnScroll>
@@ -69,68 +62,22 @@ function App() {
           </Alert>
         ) : null}
 
-        <ListItem>
-          <ListItemText
+        {!$mmrl_wpd.getHasAccessToFileSystem() ? (
+          <Alert
             sx={{
-              "& .MuiTypography-root": {
-                color: "var(--onSurface)",
-              },
+              marginTop: "8px",
+              marginBottom: "8px",
             }}
-            primary="Hide passwords"
-          />
-          <MMRLSwitch
-            checked={hidePasswords}
-            onChange={(e) => setHidePasswords(e.target.checked)}
-          />
-        </ListItem>
-
-        {networks.map((wifi, index, arr) => (
-          <>
-            <ListItem>
-              <ListItemText
-                sx={{
-                  "& .MuiListItemText-secondary": {
-                    color: "var(--onSurface)",
-                    WebkitTextSecurity:
-                      wifi.psk !== null && hidePasswords ? "disc" : "none",
-                    wordWrap: "break-word",
-                    fontStyle: wifi.psk === null ? "italic" : "none",
-                  },
-                }}
-                primary={
-                  <Typography color="var(--onSurface)" variant="h5">
-                    {wifi.ssid}
-                  </Typography>
-                }
-                secondary={
-                  <Box
-                    sx={{
-                      userSelect: "text",
-                      marginTop: "16px",
-                      padding: "16px",
-                      wordWrap: "break-word",
-                      backgroundColor: "var(--surfaceContainerLowest)",
-                      borderRadius: "20px",
-                      color: "var(--onSurface)",
-                    }}
-                    onClick={()=> {
-                      if (!hidePasswords) {
-                        $mmrl_wpd.shareText(wifi.psk)
-                      }
-                    }}
-                  >
-                    {wifi.psk
-                      ? hidePasswords
-                        ? wifi.psk.slice(1, 9)
-                        : wifi.psk
-                      : "Has no password"}
-                  </Box>
-                }
-              />
-            </ListItem>
-            {index + 1 !== arr.length && <Divider variant="middle" />}
-          </>
-        ))}
+            variant="filled"
+            severity="error"
+          >
+            The access to the FileSystem API has been disabled. Please enable
+            the FileSystem API in the MMRL settings to use this module. Pushed
+            fallback data.
+          </Alert>
+        ) : (
+          <WifiView />
+        )}
       </Scaffold>
 
       <Box
@@ -156,5 +103,81 @@ function App() {
     </Box>
   );
 }
+
+const WifiView = () => {
+  const networks = useNetworks(configStoreFallback);
+
+  const [hidePasswords, setHidePasswords] = useLocalStorage(
+    "hidePasswords",
+    true
+  );
+
+  return (
+    <>
+      <ListItem>
+        <ListItemText
+          sx={{
+            "& .MuiTypography-root": {
+              color: "var(--onSurface)",
+            },
+          }}
+          primary="Hide passwords"
+        />
+        <MMRLSwitch
+          checked={hidePasswords}
+          onChange={(e) => setHidePasswords(e.target.checked)}
+        />
+      </ListItem>
+
+      {networks.map((wifi, index, arr) => (
+        <>
+          <ListItem>
+            <ListItemText
+              sx={{
+                "& .MuiListItemText-secondary": {
+                  color: "var(--onSurface)",
+                  WebkitTextSecurity:
+                    wifi.psk !== null && hidePasswords ? "disc" : "none",
+                  wordWrap: "break-word",
+                  fontStyle: wifi.psk === null ? "italic" : "none",
+                },
+              }}
+              primary={
+                <Typography color="var(--onSurface)" variant="h5">
+                  {wifi.ssid}
+                </Typography>
+              }
+              secondary={
+                <Box
+                  sx={{
+                    userSelect: "text",
+                    marginTop: "16px",
+                    padding: "16px",
+                    wordWrap: "break-word",
+                    backgroundColor: "var(--surfaceContainerLowest)",
+                    borderRadius: "20px",
+                    color: "var(--onSurface)",
+                  }}
+                  onClick={() => {
+                    if (!hidePasswords) {
+                      $mmrl_wpd.shareText(wifi.psk);
+                    }
+                  }}
+                >
+                  {wifi.psk
+                    ? hidePasswords
+                      ? wifi.psk.slice(1, 9)
+                      : wifi.psk
+                    : "Has no password"}
+                </Box>
+              }
+            />
+          </ListItem>
+          {index + 1 !== arr.length && <Divider variant="middle" />}
+        </>
+      ))}
+    </>
+  );
+};
 
 export { App };

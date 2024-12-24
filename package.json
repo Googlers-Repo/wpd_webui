@@ -21,7 +21,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "push": "adb shell rm -rf /data/adb/modules/mmrl_wpd/webroot/* && adb push ./build/static ./build/index.html /data/adb/modules/mmrl_wpd/webroot"
+    "push": "adb shell rm -rf /data/adb/modules/mmrl_wpd/webroot/* && adb push ./build/static ./build/index.html /data/adb/modules/mmrl_wpd/webroot",
+    "build-push": "npm run build && npm run push"
   },
   "eslintConfig": {
     "extends": [
